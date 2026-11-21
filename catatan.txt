@@ -1,0 +1,662 @@
+1. php artisan --version
+Buat mengecek versi Laravel yang digunakan.
+3. php artisan key:generate
+Buat membuat APP_KEY aplikasi di file .env.
+4. php artisan make:model Mahasiswa -m
+Buat membuat Model Mahasiswa sekaligus file Migration.
+5. php artisan migrate
+Buat menjalankan Migration sehingga tabel dibuat di database.
+6. php artisan migrate:status
+Buat mengecek Migration mana yang sudah dijalankan.
+7. php artisan migrate:rollback
+Buat membatalkan batch Migration terakhir.
+8. php artisan make:controller MahasiswaController --resource
+Buat membuat Controller website dengan method CRUD.
+9. php artisan make:controller Api/MahasiswaController --api
+Buat membuat Controller API dengan 5 method CRUD.
+10. php artisan make:request StoreMahasiswaRequest
+Buat membuat file validasi saat menambah data.
+11. php artisan make:request UpdateMahasiswaRequest
+Buat membuat file validasi saat mengubah data.
+12. php artisan install:api
+Buat mengaktifkan dukungan routing API dan membuat routes/api.php jika belum ada.
+13. php artisan route:list
+Buat menampilkan seluruh route yang sudah terdaftar.
+14. php artisan serve
+Buat menjalankan website Laravel di localhost.
+15. php artisan tinker
+Buat mencoba perintah PHP dan menguji Model langsung lewat terminal.
+16. php artisan optimize:clear
+Buat membersihkan cache Laravel saat perubahan belum terbaca.
+Di terminal PowerShell, jalankan:
+
+## 2. Membuat Database
+
+Buka phpMyAdmin melalui Laragon, kemudian buat database:
+
+`uts_mahasiswa`
+
+Setelah itu, buka file `.env` dan sesuaikan bagian database:
+
+```
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=uts_mahasiswa
+DB_USERNAME=root
+DB_PASSWORD=
+
+```
+
+Pastikan MySQL di Laragon sudah berjalan.
+
+## 3. Membuat Model dan Migration
+
+Di terminal VS Code, ketik:
+
+```
+php artisan make:model Mahasiswa -m
+```
+
+Perintah ini membuat:
+
+- `app/Models/Mahasiswa.php`
+- `database/migrations/xxxx_create_mahasiswas_table.php`
+
+### A. Ngoding Migration
+
+Buka file migration mahasiswa dan isi seperti berikut:
+
+```
+
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('mahasiswas', function (Blueprint $table) {
+            $table->id();
+            $table->string('nim')->unique();
+            $table->string('nama');
+            $table->string('prodi');
+            $table->string('kelas');
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('mahasiswas');
+    }
+};
+
+```
+
+### B. Ngoding Model
+
+Buka `app/Models/Mahasiswa.php`, lalu isi:
+
+```
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Mahasiswa extends Model
+{
+    protected $table = 'mahasiswas';
+
+    protected $fillable = [
+        'nim',
+        'nama',
+        'prodi',
+        'kelas',
+    ];
+}
+
+```
+
+### C. Jalankan Migration di Terminal
+
+Setelah migration disimpan:
+
+```
+php artisan migrate
+```
+
+Perintah ini membuat tabel `mahasiswas` di database.
+
+## 4. Membuat Controller Website
+
+Di terminal:
+
+```
+php artisan make:controller MahasiswaController --resource
+```
+
+Buka `app/Http/Controllers/MahasiswaController.php`, kemudian isi:
+
+```
+
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Mahasiswa;
+use Illuminate\Http\Request;
+
+class MahasiswaController extends Controller
+{
+    public function index()
+    {
+        $mahasiswas = Mahasiswa::latest()->get();
+
+        return view('mahasiswa.index', compact('mahasiswas'));
+    }
+
+    public function create()
+    {
+        return view('mahasiswa.create');
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'nim' => 'required|string|unique:mahasiswas,nim',
+            'nama' => 'required|string|min:3',
+            'prodi' => 'required|string',
+            'kelas' => 'required|string',
+        ]);
+
+        Mahasiswa::create($data);
+
+        return redirect()->route('mahasiswa.index')
+            ->with('success', 'Mahasiswa berhasil ditambahkan');
+    }
+
+    public function show(Mahasiswa $mahasiswa)
+    {
+        return view('mahasiswa.show', compact('mahasiswa'));
+    }
+
+    public function edit(Mahasiswa $mahasiswa)
+    {
+        return view('mahasiswa.edit', compact('mahasiswa'));
+    }
+
+    public function update(Request $request, Mahasiswa $mahasiswa)
+    {
+        $data = $request->validate([
+            'nim' => 'required|string|unique:mahasiswas,nim,' . $mahasiswa->id,
+            'nama' => 'required|string|min:3',
+            'prodi' => 'required|string',
+            'kelas' => 'required|string',
+        ]);
+
+        $mahasiswa->update($data);
+
+        return redirect()->route('mahasiswa.index')
+            ->with('success', 'Mahasiswa berhasil diperbarui');
+    }
+
+    public function destroy(Mahasiswa $mahasiswa)
+    {
+        $mahasiswa->delete();
+
+        return redirect()->route('mahasiswa.index')
+            ->with('success', 'Mahasiswa berhasil dihapus');
+    }
+}
+
+```
+
+## 5. Membuat Route Web
+
+Buka `routes/web.php`, lalu tambahkan:
+
+```
+
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MahasiswaController;
+
+Route::get('/', function () {
+    return redirect()->route('mahasiswa.index');
+});
+
+Route::resource('mahasiswa', MahasiswaController::class);
+
+```
+
+Contoh ini untuk project latihan kosong. Jika `web.php` sudah berisi route penting, sesuaikan dan jangan menghapusnya sembarangan.
+
+## 6. Membuat Tampilan Blade
+
+Di `resources/views`, buat folder `mahasiswa`.
+
+Untuk contoh latihan yang sederhana, buat empat file: `index.blade.php`, `create.blade.php`, `show.blade.php`, dan `edit.blade.php`.
+
+### A. Daftar Mahasiswa — `index.blade.php`
+
+```
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Mahasiswa</title>
+</head>
+<body>
+    <h1>Daftar Mahasiswa</h1>
+
+    @if(session('success'))
+        <p>{{ session('success') }}</p>
+    @endif
+
+    <a href="{{ route('mahasiswa.create') }}">
+        Tambah Mahasiswa
+    </a>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>NIM</th>
+            <th>Nama</th>
+            <th>Prodi</th>
+            <th>Kelas</th>
+            <th>Aksi</th>
+        </tr>
+
+        @foreach($mahasiswas as $mahasiswa)
+        <tr>
+            <td>{{ $mahasiswa->nim }}</td>
+            <td>{{ $mahasiswa->nama }}</td>
+            <td>{{ $mahasiswa->prodi }}</td>
+            <td>{{ $mahasiswa->kelas }}</td>
+            <td>
+                <a href="{{ route('mahasiswa.show', $mahasiswa) }}">Detail</a>
+                <a href="{{ route('mahasiswa.edit', $mahasiswa) }}">Edit</a>
+
+                <form action="{{ route('mahasiswa.destroy', $mahasiswa) }}"
+                      method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit">Hapus</button>
+                </form>
+            </td>
+        </tr>
+        @endforeach
+    </table>
+</body>
+</html>
+
+```
+
+### B. Tambah Mahasiswa — `create.blade.php`
+
+```
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Tambah Mahasiswa</title>
+</head>
+<body>
+    <h1>Tambah Mahasiswa</h1>
+
+    @if($errors->any())
+        <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    @endif
+
+    <form action="{{ route('mahasiswa.store') }}" method="POST">
+        @csrf
+
+        <input type="text" name="nim" placeholder="NIM"
+               value="{{ old('nim') }}" required>
+
+        <input type="text" name="nama" placeholder="Nama"
+               value="{{ old('nama') }}" required>
+
+        <input type="text" name="prodi" placeholder="Prodi"
+               value="{{ old('prodi') }}" required>
+
+        <input type="text" name="kelas" placeholder="Kelas"
+               value="{{ old('kelas') }}" required>
+
+        <button type="submit">Simpan</button>
+    </form>
+
+    <a href="{{ route('mahasiswa.index') }}">Kembali</a>
+</body>
+</html>
+
+```
+
+### C. Detail Mahasiswa — `show.blade.php`
+
+```
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Detail Mahasiswa</title>
+</head>
+<body>
+    <h1>Detail Mahasiswa</h1>
+
+    <p>NIM: {{ $mahasiswa->nim }}</p>
+    <p>Nama: {{ $mahasiswa->nama }}</p>
+    <p>Prodi: {{ $mahasiswa->prodi }}</p>
+    <p>Kelas: {{ $mahasiswa->kelas }}</p>
+
+    <a href="{{ route('mahasiswa.index') }}">
+        Kembali
+    </a>
+</body>
+</html>
+
+```
+
+### D. Edit Mahasiswa — `edit.blade.php`
+
+```
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Mahasiswa</title>
+</head>
+<body>
+    <h1>Edit Mahasiswa</h1>
+
+    @if($errors->any())
+        <ul>
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    @endif
+
+    <form action="{{ route('mahasiswa.update', $mahasiswa) }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <input type="text" name="nim"
+               value="{{ old('nim', $mahasiswa->nim) }}" required>
+
+        <input type="text" name="nama"
+               value="{{ old('nama', $mahasiswa->nama) }}" required>
+
+        <input type="text" name="prodi"
+               value="{{ old('prodi', $mahasiswa->prodi) }}" required>
+
+        <input type="text" name="kelas"
+               value="{{ old('kelas', $mahasiswa->kelas) }}" required>
+
+        <button type="submit">Update</button>
+    </form>
+
+    <a href="{{ route('mahasiswa.index') }}">Kembali</a>
+</body>
+</html>
+
+```
+
+## 7. Membuat CRUD API
+
+Sekarang bagian Modul 3.
+
+### A. Buat Controller API di Terminal
+
+```
+php artisan make:controller Api/MahasiswaController --api
+```
+
+### B. Buat Form Request
+
+```
+php artisan make:request StoreMahasiswaRequest
+php artisan make:request UpdateMahasiswaRequest
+```
+
+### C. Isi `StoreMahasiswaRequest.php`
+
+```
+
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreMahasiswaRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'nim' => 'required|string|unique:mahasiswas,nim',
+            'nama' => 'required|string|min:3|max:150',
+            'prodi' => 'required|string',
+            'kelas' => 'required|string',
+        ];
+    }
+}
+
+```
+
+### D. Isi `UpdateMahasiswaRequest.php`
+
+```
+
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class UpdateMahasiswaRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        $id = $this->route('mahasiswa');
+
+        return [
+            'nim' => [
+                'sometimes', 'required', 'string',
+                Rule::unique('mahasiswas', 'nim')->ignore($id),
+            ],
+            'nama' => 'sometimes|required|string|min:3|max:150',
+            'prodi' => 'sometimes|required|string',
+            'kelas' => 'sometimes|required|string',
+        ];
+    }
+}
+
+```
+
+### E. Isi `app/Http/Controllers/Api/MahasiswaController.php`
+
+```
+
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreMahasiswaRequest;
+use App\Http\Requests\UpdateMahasiswaRequest;
+use App\Models\Mahasiswa;
+use Illuminate\Http\Request;
+
+class MahasiswaController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Mahasiswa::query();
+
+        if ($request->filled('cari')) {
+            $query->where('nama', 'like', '%' . $request->cari . '%');
+        }
+
+        return response()->json(
+            $query->latest()->paginate(10)->withQueryString(),
+            200
+        );
+    }
+
+    public function store(StoreMahasiswaRequest $request)
+    {
+        $mahasiswa = Mahasiswa::create($request->validated());
+
+        return response()->json([
+            'message' => 'Mahasiswa berhasil ditambahkan.',
+            'data' => $mahasiswa,
+        ], 201);
+    }
+
+    public function show(string $id)
+    {
+        $mahasiswa = Mahasiswa::find($id);
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'message' => 'Mahasiswa tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'data' => $mahasiswa,
+        ], 200);
+    }
+
+    public function update(UpdateMahasiswaRequest $request, string $id)
+    {
+        $mahasiswa = Mahasiswa::find($id);
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'message' => 'Mahasiswa tidak ditemukan.',
+            ], 404);
+        }
+
+        $mahasiswa->update($request->validated());
+
+        return response()->json([
+            'message' => 'Mahasiswa berhasil diperbarui.',
+            'data' => $mahasiswa->fresh(),
+        ], 200);
+    }
+
+    public function destroy(string $id)
+    {
+        $mahasiswa = Mahasiswa::find($id);
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'message' => 'Mahasiswa tidak ditemukan.',
+            ], 404);
+        }
+
+        $mahasiswa->delete();
+
+        return response()->json([
+            'message' => 'Mahasiswa berhasil dihapus.',
+        ], 200);
+    }
+}
+
+```
+
+### F. Daftarkan Route API
+
+Buka `routes/api.php`.
+
+```
+
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\MahasiswaController;
+
+Route::apiResource('mahasiswa', MahasiswaController::class);
+
+```
+
+Kalau `routes/api.php` belum tersedia pada project mentah Laravel, jalankan `php artisan install:api` terlebih dahulu. Perintah ini bisa memasang dependency tambahan.
+
+## 8. Pengujian Terakhir
+
+Jalankan perintah terminal:
+
+```
+php artisan route:list
+```
+
+Lalu jalankan Laravel jika belum aktif:
+
+```
+php artisan serve
+```
+
+Untuk website, buka:
+
+`http://127.0.0.1:8000/mahasiswa`
+
+Untuk API, gunakan Postman:
+
+| Method | URL                |
+| ------ | ------------------ |
+| GET    | `/api/mahasiswa`   |
+| POST   | `/api/mahasiswa`   |
+| GET    | `/api/mahasiswa/1` |
+| PUT    | `/api/mahasiswa/1` |
+| DELETE | `/api/mahasiswa/1` |
+
+Contoh Body JSON untuk POST:
+
+```
+
+{
+    "nim": "250441100001",
+    "nama": "Mahasiswa UTS",
+    "prodi": "Teknik Informatika",
+    "kelas": "3D"
+}
+
+```
+
+Pada Postman, pilih Body → raw → JSON, dan tambahkan header `Accept: application/json`.
+
+## Ringkasan super cepat untuk file catatanmu
+
+Urutan terminal dan coding
+
+1\. Cek project dan atur .env 2. Buat database 3. php artisan make:model Mahasiswa -m 4. NGODING migration + model 5. php artisan migrate 6. php artisan make:controller MahasiswaController --resource 7. NGODING controller web + routes/web.php 8. Buat Blade index, create, show, edit 9. php artisan make:controller Api/MahasiswaController --api 10. php artisan make:request StoreMahasiswaRequest 11. php artisan make:request UpdateMahasiswaRequest 12. NGODING Request + Controller API + routes/api.php 13. php artisan route:list 14. php artisan serve 15. TEST browser + Postman
+
+Catatan penting: Ini contoh latihan untuk studi kasus Mahasiswa, bukan jawaban pasti soal UTS. Saat studi kasus dibagikan, nama model, tabel, kolom, validasi, dan fitur harus disesuaikan dengan instruksi dosen. Jika aturan ujian tidak mengizinkan catatan atau bantuan AI, gunakan panduan ini untuk berlatih sebelum ujian.

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -9,7 +10,6 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    // Route bawaan Breeze, otomatis diarahkan ke dashboard sesuai role
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -18,6 +18,10 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'admin'])->name('dashboard');
+
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::patch('/users/{user}/toggle', [UserController::class, 'toggle'])->name('users.toggle');
+        Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
     });
 
     Route::middleware('role:penjual')->prefix('penjual')->name('penjual.')->group(function () {

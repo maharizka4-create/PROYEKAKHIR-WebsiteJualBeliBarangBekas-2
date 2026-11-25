@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VerifikasiController;
 use App\Http\Controllers\DashboardController;
@@ -31,6 +32,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi.index');
         Route::patch('/verifikasi/{product}/setujui', [VerifikasiController::class, 'setujui'])->name('verifikasi.setujui');
         Route::patch('/verifikasi/{product}/tolak', [VerifikasiController::class, 'tolak'])->name('verifikasi.tolak');
+
+        // Daftar barang (admin hanya melihat: daftar + detail)
+        Route::resource('products', ProductController::class)->only(['index', 'show']);
     });
 
     Route::middleware('role:penjual')->prefix('penjual')->name('penjual.')->group(function () {

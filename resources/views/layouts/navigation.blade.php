@@ -23,6 +23,9 @@
                         <x-nav-link :href="url('/admin/users')" :active="request()->is('admin/users*')">
                             Kelola User
                         </x-nav-link>
+                        <x-nav-link :href="url('/admin/products')" :active="request()->is('admin/products*')">
+                            Barang
+                        </x-nav-link>
                         <x-nav-link :href="url('/admin/verifikasi')" :active="request()->is('admin/verifikasi*')">
                             Verifikasi
                         </x-nav-link>
@@ -89,6 +92,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="url('/admin/users')" :active="request()->is('admin/users*')">
                     Kelola User
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="url('/admin/products')" :active="request()->is('admin/products*')">
+                    Barang
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="url('/admin/verifikasi')" :active="request()->is('admin/verifikasi*')">
                     Verifikasi

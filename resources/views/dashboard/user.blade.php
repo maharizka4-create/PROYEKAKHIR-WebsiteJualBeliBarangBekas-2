@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
                 <h2 class="text-xl font-bold text-white">
-                    Beranda Pembeli
+                    Dashboard Pembeli
                 </h2>
                 <p class="text-sm text-amber-100 mt-1">
-                    Selamat datang di SEKENOVA
+                    Selamat datang kembali, {{ auth()->user()->name }}!
                 </p>
             </div>
 
@@ -19,7 +19,7 @@
     <div class="bg-coklat-50 min-h-screen">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-            {{-- SAPAAN PEMBELI --}}
+            {{-- SAPAAN PERSONAL --}}
             <section class="relative overflow-hidden rounded-2xl
                 bg-gradient-to-r from-coklat-950 via-coklat-800 to-coklat-600
                 p-8 sm:p-12 shadow-lg">
@@ -28,7 +28,7 @@
                     <span class="inline-block px-4 py-2 rounded-full
                         bg-white/15 border border-white/20
                         text-amber-100 text-xs font-semibold mb-5">
-                        Marketplace Barang Bekas Berkualitas
+                        DASHBOARD PEMBELI SEKENOVA
                     </span>
 
                     <h1 class="text-3xl sm:text-4xl lg:text-5xl
@@ -36,15 +36,16 @@
                         Halo, {{ auth()->user()->name }}!
                         <br>
                         <span class="text-amber-200">
-                            Selamat Datang
+                            Senang Melihatmu Kembali.
                         </span>
                     </h1>
 
                     <p class="mt-5 text-sm sm:text-base
                         text-amber-50 leading-relaxed max-w-xl">
+                        Selamat datang kembali di SEKENOVA.
                         Temukan berbagai barang bekas berkualitas
-                        dengan harga bersahabat. Mari temukan barang
-                        favoritmu dan mulai cerita baru bersama SEKENOVA.
+                        dengan harga bersahabat dan pilih barang
+                        yang sesuai dengan kebutuhanmu.
                     </p>
 
                     <div class="mt-8 flex flex-wrap gap-3">
@@ -53,7 +54,6 @@
                             px-6 py-3 rounded-xl bg-amber-100
                             text-coklat-950 font-bold text-sm
                             hover:bg-amber-200 transition shadow">
-
                             Jelajahi Katalog
                             <span class="ml-2">→</span>
                         </a>
@@ -63,19 +63,16 @@
                             px-6 py-3 rounded-xl border border-white/40
                             text-white font-semibold text-sm
                             hover:bg-white/10 transition">
-
                             Profil Saya
                         </a>
                     </div>
                 </div>
 
                 <div class="absolute -right-16 -bottom-32
-                    w-80 h-80 rounded-full bg-amber-300/10">
-                </div>
+                    w-80 h-80 rounded-full bg-amber-300/10"></div>
 
                 <div class="absolute right-20 -top-20
-                    w-56 h-56 rounded-full bg-amber-200/10">
-                </div>
+                    w-56 h-56 rounded-full bg-amber-200/10"></div>
             </section>
 
             {{-- MENU UTAMA --}}
@@ -84,7 +81,6 @@
                     <h3 class="text-xl font-bold text-coklat-950">
                         Menu Utama
                     </h3>
-
                     <p class="text-sm text-coklat-600 mt-1">
                         Akses layanan SEKENOVA dengan mudah.
                     </p>

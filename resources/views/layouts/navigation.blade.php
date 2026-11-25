@@ -15,6 +15,15 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @role('admin')
+                        <x-nav-link :href="url('/admin/categories')" :active="request()->is('admin/categories*')">
+                            Kategori
+                        </x-nav-link>
+                        <x-nav-link :href="url('/admin/users')" :active="request()->is('admin/users*')">
+                            Kelola User
+                        </x-nav-link>
+                    @endrole
                 </div>
             </div>
 
@@ -70,6 +79,15 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @role('admin')
+                <x-responsive-nav-link :href="url('/admin/categories')" :active="request()->is('admin/categories*')">
+                    Kategori
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="url('/admin/users')" :active="request()->is('admin/users*')">
+                    Kelola User
+                </x-responsive-nav-link>
+            @endrole
         </div>
 
         <!-- Responsive Settings Options -->

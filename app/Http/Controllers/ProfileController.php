@@ -42,6 +42,10 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        if ($request->user()->hasRole('admin')) {
+            abort(403, 'Akun admin tidak boleh dihapus.');
+        }
+
         $request->validateWithBag('userDeletion', [
             'password' => ['required', 'current_password'],
         ]);

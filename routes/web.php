@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
@@ -22,6 +23,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::patch('/users/{user}/toggle', [UserController::class, 'toggle'])->name('users.toggle');
         Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
+
+        Route::resource('categories', CategoryController::class)->except(['show', 'create']);
     });
 
     Route::middleware('role:penjual')->prefix('penjual')->name('penjual.')->group(function () {

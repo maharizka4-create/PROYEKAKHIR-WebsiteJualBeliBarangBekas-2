@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\SellerActivationController;
+use App\Http\Controllers\CatalogController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -32,7 +33,11 @@ Route::post('/mulai-jual', [SellerActivationController::class, 'store'])
     ->middleware('auth')
     ->name('seller.activate');
 
-    // CRUD barang bekas milik penjual
+// CRUD barang bekas milik penjual
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('products', ProductController::class);
 });
+
+// Katalog barang bekas — dapat diakses tanpa login
+Route::get('/katalog', [CatalogController::class, 'index'])
+    ->name('catalog.index');

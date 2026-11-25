@@ -19,9 +19,9 @@ class ProductSeeder extends Seeder
             return;
         }
 
-        $fashion = Category::firstOrCreate(['nama' => 'Fashion'], ['deskripsi' => 'Pakaian, sepatu, tas']);
-        $elektronik = Category::firstOrCreate(['nama' => 'Elektronik'], ['deskripsi' => 'Gadget dan perangkat elektronik']);
-        $buku = Category::firstOrCreate(['nama' => 'Buku'], ['deskripsi' => 'Buku dan alat tulis']);
+        $fashion = Category::firstOrCreate(['name' => 'Fashion'], ['description' => 'Pakaian, sepatu, tas']);
+        $elektronik = Category::firstOrCreate(['name' => 'Elektronik'], ['description' => 'Gadget dan perangkat elektronik']);
+        $buku = Category::firstOrCreate(['name' => 'Buku'], ['description' => 'Buku dan alat tulis']);
 
         $data = [
             ['Jaket Denim Vintage', $fashion, 180000, 1, 'Seperti Baru', 'menunggu'],

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\VerifikasiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,11 @@ Route::middleware('auth')->group(function () {
         Route::patch('/users/{user}/role', [UserController::class, 'updateRole'])->name('users.role');
 
         Route::resource('categories', CategoryController::class)->except(['show', 'create']);
+
+        // Verifikasi barang
+        Route::get('/verifikasi', [VerifikasiController::class, 'index'])->name('verifikasi.index');
+        Route::patch('/verifikasi/{product}/setujui', [VerifikasiController::class, 'setujui'])->name('verifikasi.setujui');
+        Route::patch('/verifikasi/{product}/tolak', [VerifikasiController::class, 'tolak'])->name('verifikasi.tolak');
     });
 
     Route::middleware('role:penjual')->prefix('penjual')->name('penjual.')->group(function () {

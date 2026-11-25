@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     public const ROLE_ADMIN   = 'admin';
     public const ROLE_PENJUAL = 'penjual';
@@ -31,7 +32,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    // Laravel 11+ (untuk Laravel 10 pindahkan ke properti $casts)
     protected function casts(): array
     {
         return [
@@ -41,22 +41,17 @@ class User extends Authenticatable
         ];
     }
 
-    public function hasRole(string ...$roles): bool
-    {
-        return in_array($this->role, $roles, true);
-    }
-
-    public function isAdmin(): bool   { return $this->role === self::ROLE_ADMIN; }
-    public function isPenjual(): bool { return $this->role === self::ROLE_PENJUAL; }
-    public function isUser(): bool    { return $this->role === self::ROLE_USER; }
+    public function isAdmin(): bool   { return $this->hasRole(self::ROLE_ADMIN); }
+    public function isPenjual(): bool { return $this->hasRole(self::ROLE_PENJUAL); }
+    public function isUser(): bool    { return $this->hasRole(self::ROLE_USER); }
 
     /** Nama route dashboard sesuai role */
     public function dashboardRoute(): string
     {
-        return match ($this->role) {
-            self::ROLE_ADMIN   => 'admin.dashboard',
-            self::ROLE_PENJUAL => 'penjual.dashboard',
-            default            => 'user.dashboard',
+        return match (true) {
+            $this->hasRole(self::ROLE_ADMIN)   => 'admin.dashboard',
+            $this->hasRole(self::ROLE_PENJUAL) => 'penjual.dashboard',
+            default                            => 'user.dashboard',
         };
     }
 }

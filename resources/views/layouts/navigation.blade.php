@@ -29,6 +29,9 @@
                         <x-nav-link :href="url('/admin/verifikasi')" :active="request()->is('admin/verifikasi*')">
                             Verifikasi
                         </x-nav-link>
+                        <x-nav-link :href="url('/admin/laporan')" :active="request()->is('admin/laporan*')">
+                            Laporan
+                        </x-nav-link>
                     @endrole
                 </div>
             </div>
@@ -98,6 +101,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="url('/admin/verifikasi')" :active="request()->is('admin/verifikasi*')">
                     Verifikasi
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="url('/admin/laporan')" :active="request()->is('admin/laporan*')">
+                    Laporan
                 </x-responsive-nav-link>
             @endrole
         </div>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VerifikasiController;
@@ -35,6 +36,9 @@ Route::middleware('auth')->group(function () {
 
         // Daftar barang (admin hanya melihat: daftar + detail)
         Route::resource('products', ProductController::class)->only(['index', 'show']);
+
+        // Laporan transaksi
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     });
 
     Route::middleware('role:penjual')->prefix('penjual')->name('penjual.')->group(function () {

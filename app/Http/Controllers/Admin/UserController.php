@@ -12,10 +12,14 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = User::query()
+            ->with('roles')
             ->when($request->q, fn ($query, $s) => $query->where(
                 fn ($w) => $w->where('name', 'like', "%{$s}%")->orWhere('email', 'like', "%{$s}%")
             ))
-            ->when($request->role, fn ($query, $r) => $query->where('role', $r))
+            ->when(
+                in_array($request->role, User::ROLES, true),
+                fn ($query) => $query->role($request->role)
+            )
             ->latest()
             ->paginate(10)
             ->withQueryString();
@@ -44,7 +48,7 @@ class UserController extends Controller
             'role' => ['required', Rule::in(User::ROLES)],
         ]);
 
-        $user->update($data);
+        $user->syncRoles($data['role']);
 
         return back()->with('status', 'Role diperbarui.');
     }

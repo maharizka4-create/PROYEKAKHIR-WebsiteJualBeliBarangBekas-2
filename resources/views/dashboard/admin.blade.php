@@ -33,8 +33,7 @@
                             <tr>
                                 <td class="px-6 py-3">{{ $u->name }}</td>
                                 <td class="px-6 py-3">{{ $u->email }}</td>
-                                <td class="px-6 py-3">{{ $u->role }}</td>
-                                <td class="px-6 py-3">{{ $u->is_active ? 'Aktif' : 'Nonaktif' }}</td>
+                                <td class="px-6 py-3">{{ $u->getRoleNames()->first() }}</td>                                    <td class="px-6 py-3">{{ $u->is_active ? 'Aktif' : 'Nonaktif' }}</td>
                             </tr>
                         @endforeach
                     </tbody>

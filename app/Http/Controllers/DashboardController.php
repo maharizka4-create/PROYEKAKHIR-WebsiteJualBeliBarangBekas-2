@@ -15,12 +15,11 @@ class DashboardController extends Controller
     public function admin()
     {
         return view('dashboard.admin', [
-            'totalUser'    => User::where('role', User::ROLE_USER)->count(),
-            'totalPenjual' => User::where('role', User::ROLE_PENJUAL)->count(),
-            'latestUsers'  => User::latest()->take(5)->get(),
+            'totalUser'    => User::role(User::ROLE_USER)->count(),
+            'totalPenjual' => User::role(User::ROLE_PENJUAL)->count(),
+            'latestUsers'  => User::with('roles')->latest()->take(5)->get(),
         ]);
     }
-
     public function penjual()
     {
         return view('dashboard.penjual');

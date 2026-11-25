@@ -48,8 +48,8 @@
                                                 class="border-gray-300 rounded-md text-sm"
                                                 @disabled($u->id === auth()->id())>
                                             @foreach (\App\Models\User::ROLES as $r)
-                                                <option value="{{ $r }}" @selected($u->role === $r)>{{ $r }}</option>
-                                            @endforeach
+
+                                            <option value="{{ $r }}" @selected($u->hasRole($r))>{{ $r }}</option>                                                   @endforeach
                                         </select>
                                     </form>
                                 </td>

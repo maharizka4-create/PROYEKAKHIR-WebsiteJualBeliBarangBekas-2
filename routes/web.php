@@ -8,26 +8,26 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CatalogController;
 
-// Halaman utama
+// HALAMAN BERANDA PUBLIK
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
-// Katalog barang untuk seluruh pengunjung
+// KATALOG BARANG
 Route::get('/katalog', [CatalogController::class, 'index'])
     ->name('catalog.index');
 
-// Detail barang yang sudah disetujui Admin
+// DETAIL BARANG
 Route::get('/katalog/{product}', [CatalogController::class, 'show'])
     ->name('catalog.show');
 
 Route::middleware('auth')->group(function () {
 
-    // Dashboard umum
+    // DASHBOARD UMUM
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
-    // Profil pengguna
+    // PROFIL PENGGUNA
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');
 
@@ -71,7 +71,7 @@ Route::middleware('auth')->group(function () {
             Route::resource('products', ProductController::class);
         });
 
-    // USER / PEMBELI
+    // PEMBELI
     Route::middleware('role:user')
         ->prefix('user')
         ->name('user.')

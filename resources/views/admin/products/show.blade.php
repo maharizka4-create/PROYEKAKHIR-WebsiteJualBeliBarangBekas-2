@@ -1,9 +1,9 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight">Detail Barang</h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-4">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             <div class="bg-white shadow-sm sm:rounded-lg p-6 space-y-4">
@@ -85,4 +85,4 @@
             </a>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>

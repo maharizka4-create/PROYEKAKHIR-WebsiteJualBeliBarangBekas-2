@@ -1,58 +1,62 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SEKENOVA - Website Jual Beli Barang Bekas
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Every item deserves a second story.
 
-## About Laravel
+SEKENOVA adalah website jual beli barang bekas. Penjual menitipkan barang, admin memverifikasi barang tersebut, dan pembeli bisa melihat serta membeli barang yang sudah disetujui.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Project ini dibuat untuk UAS mata kuliah Pemrograman Berbasis Web Lanjut (PBWL).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Anggota Kelompok
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Nama | NIM | Bagian |
+|------|-----|--------|
+| Rika Trismawati | 250441100056 | Admin |
+| (isi nama teman) | (isi NIM) | Penjual |
+| (isi nama teman) | (isi NIM) | User |
 
-## Learning Laravel
+## Teknologi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Laravel 13 (PHP 8.4)
+- Laravel Breeze (Blade), Tailwind CSS, Alpine.js
+- Spatie Laravel-Permission (role)
+- Laravel Sanctum (REST API)
+- MySQL (lokal)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Fitur Admin
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- Dashboard statistik (data diambil dari REST API)
+- CRUD Kategori
+- Verifikasi barang (setujui atau tolak dengan alasan)
+- Daftar barang dan Detail (hanya lihat)
+- Laporan transaksi (filter tanggal dan status)
+- Kelola user (aktif/nonaktif dan ubah role)
 
-## Agentic Development
+## REST API
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+| Method | Endpoint | Keterangan | Akses |
+|--------|----------|------------|-------|
+| POST | /api/login | Login dan dapat token | Publik |
+| POST | /api/logout | Logout | Login |
+| GET | /api/admin/statistik | Statistik dashboard | Admin |
+| GET | /api/admin/products | Daftar barang | Admin |
+| GET | /api/admin/products/{id} | Detail barang | Admin |
 
-```bash
-composer require laravel/boost --dev
+## Cara Install (Lokal)
 
-php artisan boost:install
-```
+1. `git clone <url-repo>` lalu `git switch dev`
+2. `composer install` dan `npm install`
+3. `cp .env.example .env` lalu `php artisan key:generate`
+4. Atur database di file `.env`
+5. `php artisan migrate --seed`
+6. `npm run build` lalu `php artisan serve`
+7. Buka `http://localhost:8000`
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Akun Contoh (hanya lokal)
 
-## Contributing
+Password semua akun contoh: `password`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+(isi email admin, penjual, dan user dari seeder)
 
-## Code of Conduct
+## Link Deploy
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+(diisi setelah deploy)

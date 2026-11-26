@@ -14,32 +14,60 @@
                 </div>
             @endif
 
-            {{-- Kartu statistik --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                    <div class="text-sm text-coklat-600">Total pembeli</div>
-                    <div class="text-3xl font-bold text-coklat-900">{{ $totalUser }}</div>
+            {{-- Kartu statistik: datanya diambil dari REST API (GET /api/admin/statistik) --}}
+            <div
+                x-data="{
+                    d: null,
+                    gagal: false,
+                    async muat() {
+                        try {
+                            const r = await fetch('/api/admin/statistik', {
+                                headers: { 'Accept': 'application/json' },
+                                credentials: 'same-origin'
+                            });
+                            if (!r.ok) throw new Error('gagal');
+                            this.d = (await r.json()).data;
+                        } catch (e) {
+                            this.gagal = true;
+                        }
+                    },
+                    rp(n) { return 'Rp ' + new Intl.NumberFormat('id-ID').format(n); }
+                }"
+                x-init="muat()"
+                class="space-y-2"
+            >
+                <p x-show="gagal" x-cloak class="p-3 rounded-md bg-red-100 text-red-800 text-sm">
+                    Gagal memuat statistik dari API. Coba muat ulang halaman.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <div class="text-sm text-coklat-600">Total pembeli</div>
+                        <div class="text-3xl font-bold text-coklat-900" x-text="d ? d.total_pembeli : '...'">...</div>
+                    </div>
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <div class="text-sm text-coklat-600">Total penjual</div>
+                        <div class="text-3xl font-bold text-coklat-900" x-text="d ? d.total_penjual : '...'">...</div>
+                    </div>
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <div class="text-sm text-coklat-600">Total barang</div>
+                        <div class="text-3xl font-bold text-coklat-900" x-text="d ? d.total_barang : '...'">...</div>
+                    </div>
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <div class="text-sm text-coklat-600">Menunggu verifikasi</div>
+                        <div class="text-3xl font-bold text-coklat-900" x-text="d ? d.menunggu_verifikasi : '...'">...</div>
+                    </div>
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <div class="text-sm text-coklat-600">Total transaksi</div>
+                        <div class="text-3xl font-bold text-coklat-900" x-text="d ? d.total_transaksi : '...'">...</div>
+                    </div>
+                    <div class="bg-white shadow-sm sm:rounded-lg p-6">
+                        <div class="text-sm text-coklat-600">Pendapatan (sudah dibayar)</div>
+                        <div class="text-2xl font-bold text-coklat-900" x-text="d ? rp(d.pendapatan) : '...'">...</div>
+                    </div>
                 </div>
-                <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                    <div class="text-sm text-coklat-600">Total penjual</div>
-                    <div class="text-3xl font-bold text-coklat-900">{{ $totalPenjual }}</div>
-                </div>
-                <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                    <div class="text-sm text-coklat-600">Total barang</div>
-                    <div class="text-3xl font-bold text-coklat-900">{{ $totalBarang }}</div>
-                </div>
-                <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                    <div class="text-sm text-coklat-600">Menunggu verifikasi</div>
-                    <div class="text-3xl font-bold text-coklat-900">{{ $menungguVerifikasi }}</div>
-                </div>
-                <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                    <div class="text-sm text-coklat-600">Total transaksi</div>
-                    <div class="text-3xl font-bold text-coklat-900">{{ $totalPesanan }}</div>
-                </div>
-                <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                    <div class="text-sm text-coklat-600">Pendapatan (sudah dibayar)</div>
-                    <div class="text-2xl font-bold text-coklat-900">Rp {{ number_format($pendapatan, 0, ',', '.') }}</div>
-                </div>
+
+                <p class="text-xs text-coklat-600">Data statistik diambil dari REST API <code>GET /api/admin/statistik</code>.</p>
             </div>
 
             {{-- Barang menunggu verifikasi --}}

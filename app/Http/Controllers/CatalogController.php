@@ -8,12 +8,9 @@ use Illuminate\View\View;
 
 class CatalogController extends Controller
 {
-    /**
-     * Menampilkan katalog barang yang tersedia.
-     */
+    // Menampilkan katalog produk yang sudah disetujui Admin
     public function index(Request $request): View
     {
-        // Validasi pencarian dan filter
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
             'category' => ['nullable', 'string', 'max:100'],
@@ -23,61 +20,49 @@ class CatalogController extends Controller
             ],
         ]);
 
-        // Mengambil produk yang sudah disetujui Admin
-        // dan masih memiliki stok
         $products = Product::query()
             ->where('status', 'approved')
             ->where('stock', '>', 0)
 
-            // Pencarian berdasarkan nama barang
-            ->when(
-                $filters['search'] ?? null,
-                function ($query, $search) {
-                    $query->where('name', 'like', '%' . $search . '%');
-                }
-            )
+            ->when($filters['search'] ?? null, function ($query, $search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            })
 
-            // Filter kategori
-            ->when(
-                $filters['category'] ?? null,
-                function ($query, $category) {
-                    $query->where('category', $category);
-                }
-            )
+            ->when($filters['category'] ?? null, function ($query, $category) {
+                $query->where('category', $category);
+            })
 
-            // Filter kondisi barang
-            ->when(
-                $filters['condition'] ?? null,
-                function ($query, $condition) {
-                    $query->where('condition', $condition);
-                }
-            )
+            ->when($filters['condition'] ?? null, function ($query, $condition) {
+                $query->where('condition', $condition);
+            })
 
             ->latest()
             ->paginate(12)
             ->withQueryString();
 
-        return view('catalog.index', [
-            'products' => $products,
-            'filters' => $filters,
-        ]);
+        // Mengambil kategori unik dari tabel produk
+        $categories = Product::where('status', 'approved')
+            ->whereNotNull('category')
+            ->distinct()
+            ->orderBy('category')
+            ->pluck('category');
+
+        return view('catalog.index', compact(
+            'products',
+            'filters',
+            'categories'
+        ));
     }
 
-    /**
-     * Menampilkan detail produk.
-     */
+    // Menampilkan detail produk
     public function show(Product $product): View
     {
-        // Produk hanya dapat dilihat jika sudah disetujui
-        // dan stok masih tersedia
         abort_unless(
             $product->status === 'approved' &&
             $product->stock > 0,
             404
         );
 
-        return view('catalog.show', [
-            'product' => $product,
-        ]);
+        return view('catalog.show', compact('product'));
     }
 }

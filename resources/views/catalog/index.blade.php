@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Katalog Barang - SEKENOVA</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,7 +40,7 @@
 
         /* NAVBAR */
         header {
-            background: #ffffff;
+            background: white;
             border-bottom: 1px solid #eadfd3;
             position: sticky;
             top: 0;
@@ -113,12 +112,7 @@
         }
 
         .hero-box {
-            background: linear-gradient(
-                120deg,
-                #301b11,
-                #68432d,
-                #95613b
-            );
+            background: linear-gradient(120deg, #301b11, #68432d, #95613b);
             border-radius: 24px;
             padding: 55px 60px;
             color: white;
@@ -154,7 +148,6 @@
             color: #ffe58a;
         }
 
-        /* MAIN */
         main {
             padding-bottom: 75px;
         }
@@ -192,7 +185,7 @@
             border: 1px solid #dfd2c3;
             border-radius: 9px;
             outline: none;
-            background: #fff;
+            background: white;
             color: #493629;
             font-size: 13px;
         }
@@ -539,7 +532,6 @@
 {{-- HERO --}}
 <section class="hero">
     <div class="container">
-
         <div class="hero-box">
 
             <span class="hero-label">
@@ -558,7 +550,6 @@
             </p>
 
         </div>
-
     </div>
 </section>
 
@@ -587,7 +578,6 @@
             >
 
             <select name="category">
-
                 <option value="">Semua Kategori</option>
 
                 @foreach (
@@ -601,11 +591,9 @@
                         {{ $category }}
                     </option>
                 @endforeach
-
             </select>
 
             <select name="condition">
-
                 <option value="">Semua Kondisi</option>
 
                 <option
@@ -628,7 +616,6 @@
                 >
                     Cukup
                 </option>
-
             </select>
 
             <button type="submit" class="btn">
@@ -737,7 +724,7 @@
 
     @else
 
-        {{-- JIKA PRODUK TIDAK DITEMUKAN --}}
+        {{-- PRODUK TIDAK DITEMUKAN --}}
         <div class="empty">
 
             <h3>Belum Ada Barang Ditemukan</h3>
@@ -746,8 +733,11 @@
                 Coba gunakan kata kunci atau filter lainnya.
             </p>
 
-            <a href="{{ route('catalog.index') }}" class="btn"
-               style="display:inline-block;margin-top:20px;">
+            <a
+                href="{{ route('catalog.index') }}"
+                class="btn"
+                style="display:inline-block;margin-top:20px;"
+            >
                 Lihat Semua Barang
             </a>
 
@@ -759,13 +749,11 @@
 
 {{-- FOOTER --}}
 <footer>
-
     <div class="container">
 
         <div class="footer-content">
 
             <div class="footer-brand">
-
                 <h3>SEKENOVA</h3>
 
                 <p>
@@ -773,7 +761,6 @@
                     kesempatan baru bagi setiap barang.
                     Every item deserves a second story.
                 </p>
-
             </div>
 
             <div class="footer-links">
@@ -797,7 +784,6 @@
         </div>
 
     </div>
-
 </footer>
 
 </body>

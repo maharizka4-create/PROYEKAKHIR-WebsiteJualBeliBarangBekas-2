@@ -11,7 +11,7 @@ Project ini dibuat untuk UAS mata kuliah Pemrograman Berbasis Web Lanjut (PBWL).
 | Nama | NIM | Bagian |
 |------|-----|--------|
 | Rika Trismawati | 250441100056 | Admin |
-| (isi nama teman) | (isi NIM) | Penjual |
+| Juliansah Khoirul Umam | 250441100012 | Penjual |
 | (isi nama teman) | (isi NIM) | User |
 
 ## Teknologi

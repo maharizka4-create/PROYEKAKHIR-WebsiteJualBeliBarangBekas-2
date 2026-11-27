@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,7 +37,6 @@ class Product extends Model
         ];
     }
 
-    // Penjual pemilik barang
     public function penjual(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -47,7 +47,6 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    // Admin yang memeriksa barang
     public function pemeriksa(): BelongsTo
     {
         return $this->belongsTo(User::class, 'diperiksa_oleh');

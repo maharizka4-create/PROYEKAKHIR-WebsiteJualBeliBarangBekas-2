@@ -1,46 +1,70 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto px-6 py-8 max-w-3xl">
+<div class="container mx-auto px-6 py-8 max-w-2xl">
 
-    <a href="{{ route('penjual.products.index') }}"
-       class="text-amber-900 mb-5 inline-block">
-        ← Kembali ke Produk Saya
-    </a>
+    <h1 class="text-2xl font-bold text-amber-950 mb-6">Detail Produk</h1>
 
-    <div class="bg-white rounded-xl shadow p-6">
+    <div class="bg-white rounded-xl shadow p-6 space-y-3">
 
-        @if($product->image)
-            <img src="{{ asset('storage/'.$product->image) }}"
-                 class="w-full max-h-96 object-contain rounded-lg mb-5"
-                 alt="{{ $product->name }}">
+        @if ($product->image)
+            <img
+                src="{{ asset('storage/'.$product->image) }}"
+                class="w-48 h-48 object-cover rounded-lg"
+                alt="Foto produk">
         @endif
 
-        <h1 class="text-2xl font-bold text-amber-950">
+        <p>
+            <strong>Nama:</strong>
             {{ $product->name }}
-        </h1>
-
-        <p class="text-xl font-semibold text-amber-800 my-3">
-            Rp{{ number_format($product->price, 0, ',', '.') }}
         </p>
 
-        <p class="text-gray-700 mb-4">
-            {{ $product->description }}
+        <p>
+            <strong>Kategori:</strong>
+            {{ $product->category ?: '-' }}
         </p>
 
-        <div class="space-y-2">
-            <p><strong>Kategori:</strong> {{ $product->category }}</p>
-            <p><strong>Kondisi:</strong> {{ $product->condition }}</p>
-            <p><strong>Stok:</strong> {{ $product->stock }}</p>
-            <p><strong>Status:</strong> {{ $product->status }}</p>
-        </div>
+        <p>
+            <strong>Kondisi:</strong>
+            {{ $product->condition
+                ? str_replace('_', ' ', ucfirst($product->condition))
+                : '-' }}
+        </p>
 
-        @if($product->status !== 'sold')
-            <a href="{{ route('penjual.products.edit', $product) }}"
-               class="inline-block mt-6 bg-amber-900 text-white px-5 py-3 rounded-lg">
-                Edit Produk
-            </a>
-        @endif
+        <p>
+            <strong>Harga:</strong>
+            Rp{{ number_format($product->price ?? 0, 0, ',', '.') }}
+        </p>
+
+        <p>
+            <strong>Stok:</strong>
+            {{ $product->stock ?? 0 }}
+        </p>
+
+        <p>
+            <strong>Deskripsi:</strong>
+            {{ $product->description ?: '-' }}
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+
+            @if ($product->status === 'approved')
+                <span class="text-green-700 font-semibold">Disetujui</span>
+            @elseif ($product->status === 'rejected')
+                <span class="text-red-700 font-semibold">Ditolak</span>
+            @elseif ($product->status === 'pending')
+                <span class="text-yellow-700 font-semibold">Menunggu</span>
+            @else
+                <span class="text-gray-600">Tidak diketahui</span>
+            @endif
+        </p>
+
+        <a
+            href="{{ route('penjual.products.index') }}"
+            class="inline-block mt-4 text-blue-700">
+            &larr; Kembali ke daftar produk
+        </a>
 
     </div>
 </div>

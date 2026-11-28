@@ -2,6 +2,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Penjual\PenjualOrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -83,6 +84,12 @@ Route::middleware('auth')->group(function () {
                 ->name('dashboard');
 
             Route::resource('products', ProductController::class);
+
+            Route::get('/orders', [PenjualOrderController::class, 'index'])
+                ->name('orders.index');
+
+            Route::patch('/orders/{order}/kirim', [PenjualOrderController::class, 'kirim'])
+                ->name('orders.kirim');
         });
 
     // PEMBELI

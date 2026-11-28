@@ -21,11 +21,18 @@
             @endif
 
             {{-- Pencarian --}}
-            <form method="GET" action="{{ route('admin.verifikasi.index') }}" class="flex gap-2">
-                <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama barang"
-                    class="rounded-md border-coklat-300 focus:border-coklat-500 focus:ring-coklat-500 text-sm">
+            <form method="GET"
+                  action="{{ route('admin.verifikasi.index') }}"
+                  class="flex gap-2">
+
+                <input type="text"
+                       name="q"
+                       value="{{ request('q') }}"
+                       placeholder="Cari nama barang"
+                       class="rounded-md border-coklat-300 focus:border-coklat-500 focus:ring-coklat-500 text-sm">
+
                 <button type="submit"
-                    class="px-4 py-2 bg-coklat-700 hover:bg-coklat-800 text-white text-xs font-semibold uppercase tracking-widest rounded-md">
+                        class="px-4 py-2 bg-coklat-700 hover:bg-coklat-800 text-white text-xs font-semibold uppercase tracking-widest rounded-md">
                     Cari
                 </button>
             </form>
@@ -43,46 +50,83 @@
                             <th class="px-6 py-3">Aksi</th>
                         </tr>
                     </thead>
+
                     <tbody class="divide-y divide-coklat-100">
                         @forelse ($products as $p)
                             <tr class="align-top">
                                 <td class="px-6 py-3">
-                                    <div class="font-medium text-coklat-900">{{ $p->nama }}</div>
-                                    <div class="text-xs text-coklat-600 max-w-xs">{{ $p->deskripsi }}</div>
+                                    <div class="font-medium text-coklat-900">
+                                        {{ $p->name }}
+                                    </div>
+                                    <div class="text-xs text-coklat-600 max-w-xs">
+                                        {{ $p->description }}
+                                    </div>
                                 </td>
-                                <td class="px-6 py-3">{{ $p->penjual->name ?? '-' }}</td>
-                                <td class="px-6 py-3">{{ $p->category->name ?? '-' }}</td>
-                                <td class="px-6 py-3">Rp {{ number_format($p->harga, 0, ',', '.') }}</td>
-                                <td class="px-6 py-3">{{ $p->stok }}</td>
-                                <td class="px-6 py-3">{{ $p->kondisi }}</td>
+
+                                <td class="px-6 py-3">
+                                    {{ $p->penjual->name ?? '-' }}
+                                </td>
+
+                                <td class="px-6 py-3">
+                                    {{ $p->category ?? '-' }}
+                                </td>
+
+                                <td class="px-6 py-3">
+                                    Rp {{ number_format($p->price ?? 0, 0, ',', '.') }}
+                                </td>
+
+                                <td class="px-6 py-3">
+                                    {{ $p->stock ?? 0 }}
+                                </td>
+
+                                <td class="px-6 py-3">
+                                    {{ $p->condition ?? '-' }}
+                                </td>
+
                                 <td class="px-6 py-3" x-data="{ tolak: false }">
                                     <div class="flex gap-2">
-                                        <form method="POST" action="{{ route('admin.verifikasi.setujui', $p) }}"
-                                            onsubmit="return confirm('Setujui barang ini?')">
+
+                                        {{-- Tombol Setujui --}}
+                                        <form method="POST"
+                                              action="{{ route('admin.verifikasi.setujui', $p) }}"
+                                              onsubmit="return confirm('Setujui barang ini?')">
                                             @csrf
                                             @method('PATCH')
+
                                             <button type="submit"
-                                                class="px-3 py-1 rounded-md bg-green-600 hover:bg-green-700 text-white text-xs font-semibold">
+                                                    class="px-3 py-1 rounded-md bg-green-600 hover:bg-green-700 text-white text-xs font-semibold">
                                                 Setujui
                                             </button>
                                         </form>
 
-                                        <button type="button" @click="tolak = ! tolak"
-                                            class="px-3 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white text-xs font-semibold">
+                                        {{-- Tombol Tolak --}}
+                                        <button type="button"
+                                                @click="tolak = !tolak"
+                                                class="px-3 py-1 rounded-md bg-red-600 hover:bg-red-700 text-white text-xs font-semibold">
                                             Tolak
                                         </button>
                                     </div>
 
-                                    <form x-show="tolak" x-cloak method="POST"
-                                        action="{{ route('admin.verifikasi.tolak', $p) }}" class="mt-3 space-y-2">
+                                    {{-- Form Alasan Penolakan --}}
+                                    <form x-show="tolak"
+                                          x-cloak
+                                          method="POST"
+                                          action="{{ route('admin.verifikasi.tolak', $p) }}"
+                                          class="mt-3 space-y-2">
+
                                         @csrf
                                         @method('PATCH')
-                                        <textarea name="alasan_penolakan" rows="2" required maxlength="500"
-                                            placeholder="Tulis alasan penolakan..."
-                                            class="w-56 rounded-md border-coklat-300 focus:border-coklat-500 focus:ring-coklat-500 text-sm"></textarea>
+
+                                        <textarea name="alasan_penolakan"
+                                                  rows="2"
+                                                  required
+                                                  maxlength="500"
+                                                  placeholder="Tulis alasan penolakan..."
+                                                  class="w-56 rounded-md border-coklat-300 focus:border-coklat-500 focus:ring-coklat-500 text-sm"></textarea>
+
                                         <div>
                                             <button type="submit"
-                                                class="px-3 py-1 rounded-md bg-coklat-700 hover:bg-coklat-800 text-white text-xs font-semibold">
+                                                    class="px-3 py-1 rounded-md bg-coklat-700 hover:bg-coklat-800 text-white text-xs font-semibold">
                                                 Kirim penolakan
                                             </button>
                                         </div>
@@ -91,7 +135,8 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-8 text-center text-coklat-600">
+                                <td colspan="7"
+                                    class="px-6 py-8 text-center text-coklat-600">
                                     Tidak ada barang yang menunggu verifikasi.
                                 </td>
                             </tr>
@@ -101,6 +146,7 @@
             </div>
 
             {{ $products->links() }}
+
         </div>
     </div>
 </x-admin-layout>

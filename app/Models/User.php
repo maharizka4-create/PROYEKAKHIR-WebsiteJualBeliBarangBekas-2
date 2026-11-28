@@ -14,9 +14,15 @@ class User extends Authenticatable
 
     public const ROLE_ADMIN   = 'admin';
     public const ROLE_PENJUAL = 'penjual';
+    public const ROLE_PEMBELI = 'pembeli';
     public const ROLE_USER    = 'user';
 
-    public const ROLES = [self::ROLE_ADMIN, self::ROLE_PENJUAL, self::ROLE_USER];
+    public const ROLES = [
+        self::ROLE_ADMIN,
+        self::ROLE_PENJUAL,
+        self::ROLE_PEMBELI,
+        self::ROLE_USER,
+    ];
 
     protected $fillable = [
         'name',

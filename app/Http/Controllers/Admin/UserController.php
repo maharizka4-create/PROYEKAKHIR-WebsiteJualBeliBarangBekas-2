@@ -13,12 +13,19 @@ class UserController extends Controller
     {
         $users = User::query()
             ->with('roles')
-            ->when($request->q, fn ($query, $s) => $query->where(
-                fn ($w) => $w->where('name', 'like', "%{$s}%")->orWhere('email', 'like', "%{$s}%")
-            ))
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $kataKunci = $request->q;
+
+                $query->where(function ($w) use ($kataKunci) {
+                    $w->where('name', 'like', "%{$kataKunci}%")
+                      ->orWhere('email', 'like', "%{$kataKunci}%");
+                });
+            })
             ->when(
                 in_array($request->role, User::ROLES, true),
-                fn ($query) => $query->role($request->role)
+                function ($query) use ($request) {
+                    $query->role($request->role);
+                }
             )
             ->latest()
             ->paginate(10)
@@ -30,26 +37,43 @@ class UserController extends Controller
     public function toggle(User $user)
     {
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'Tidak bisa menonaktifkan akun sendiri.');
+            return back()->with(
+                'error',
+                'Tidak bisa menonaktifkan akun sendiri.'
+            );
         }
 
-        $user->update(['is_active' => ! $user->is_active]);
+        $user->update([
+            'is_active' => ! $user->is_active,
+        ]);
 
-        return back()->with('status', 'Status akun diperbarui.');
+        return back()->with(
+            'status',
+            'Status akun berhasil diperbarui.'
+        );
     }
 
     public function updateRole(Request $request, User $user)
     {
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'Tidak bisa mengubah role akun sendiri.');
+            return back()->with(
+                'error',
+                'Tidak bisa mengubah role akun sendiri.'
+            );
         }
 
         $data = $request->validate([
-            'role' => ['required', Rule::in(User::ROLES)],
+            'role' => [
+                'required',
+                Rule::in(User::ROLES),
+            ],
         ]);
 
-        $user->syncRoles($data['role']);
+        $user->syncRoles([$data['role']]);
 
-        return back()->with('status', 'Role diperbarui.');
+        return back()->with(
+            'status',
+            'Role pengguna berhasil diperbarui.'
+        );
     }
 }

@@ -9,18 +9,18 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    // Daftar semua barang (admin hanya melihat)
+    // Daftar semua produk
     public function index(Request $request)
     {
-        $products = Product::with(['penjual', 'category'])
-            ->when($request->q, function ($query, $cari) {
-                $query->where('nama', 'like', '%' . $cari . '%');
+        $products = Product::with('penjual')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->q . '%');
             })
-            ->when($request->status, function ($query, $status) {
-                $query->where('status_persetujuan', $status);
+            ->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->status);
             })
-            ->when($request->kategori, function ($query, $kategori) {
-                $query->where('category_id', $kategori);
+            ->when($request->filled('kategori'), function ($query) use ($request) {
+                $query->where('category', $request->kategori);
             })
             ->latest()
             ->paginate(10)
@@ -28,13 +28,16 @@ class ProductController extends Controller
 
         $categories = Category::orderBy('name')->get();
 
-        return view('admin.products.index', compact('products', 'categories'));
+        return view('admin.products.index', compact(
+            'products',
+            'categories'
+        ));
     }
 
-    // Detail satu barang
+    // Detail satu produk
     public function show(Product $product)
     {
-        $product->load(['penjual', 'category', 'pemeriksa']);
+        $product->load('penjual');
 
         return view('admin.products.show', compact('product'));
     }

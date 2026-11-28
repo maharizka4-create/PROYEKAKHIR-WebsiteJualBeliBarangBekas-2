@@ -1,5 +1,5 @@
 @php
-    $menungguCount = \App\Models\Product::where('status_persetujuan', 'menunggu')->count();
+    $menungguCount = \App\Models\Product::where('status', 'pending')->count();
     $menu = [
         ['Dashboard', route('admin.dashboard'), request()->routeIs('admin.dashboard'), 'M3 12l9-9 9 9M5 10v10h5v-6h4v6h5V10'],
         ['Kategori', url('/admin/categories'), request()->is('admin/categories*'), 'M7 7h.01M3 11l8.6 8.6a2 2 0 002.8 0l5.2-5.2a2 2 0 000-2.8L11 3H3v8z'],

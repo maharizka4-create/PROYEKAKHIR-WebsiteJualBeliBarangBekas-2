@@ -13,18 +13,37 @@ class LaporanController extends Controller
         $request->validate([
             'dari' => ['nullable', 'date'],
             'sampai' => ['nullable', 'date', 'after_or_equal:dari'],
-            'status' => ['nullable', 'in:menunggu_pembayaran,dibayar,dikirim,selesai,dibatalkan'],
+            'status' => [
+                'nullable',
+                'in:' . implode(',', [
+                    Order::MENUNGGU_PEMBAYARAN,
+                    Order::DIBAYAR,
+                    Order::DIKIRIM,
+                    Order::SELESAI,
+                    Order::DIBATALKAN,
+                ]),
+            ],
         ], [
-            'sampai.after_or_equal' => 'Tanggal sampai tidak boleh lebih awal dari tanggal dari.',
+            'sampai.after_or_equal' =>
+                'Tanggal sampai tidak boleh lebih awal dari tanggal dari.',
         ]);
 
-        // Pesanan yang dihitung sebagai pendapatan (sudah dibayar)
-        $statusPendapatan = [Order::DIBAYAR, Order::DIKIRIM, Order::SELESAI];
+        $statusPendapatan = [
+            Order::DIBAYAR,
+            Order::DIKIRIM,
+            Order::SELESAI,
+        ];
 
         $query = Order::query()
-            ->when($request->dari, fn ($q, $dari) => $q->whereDate('created_at', '>=', $dari))
-            ->when($request->sampai, fn ($q, $sampai) => $q->whereDate('created_at', '<=', $sampai))
-            ->when($request->status, fn ($q, $status) => $q->where('status', $status));
+            ->when($request->filled('dari'), function ($q) use ($request) {
+                $q->whereDate('created_at', '>=', $request->dari);
+            })
+            ->when($request->filled('sampai'), function ($q) use ($request) {
+                $q->whereDate('created_at', '<=', $request->sampai);
+            })
+            ->when($request->filled('status'), function ($q) use ($request) {
+                $q->where('status', $request->status);
+            });
 
         $jumlahPesanan = (clone $query)->count();
 
@@ -33,7 +52,7 @@ class LaporanController extends Controller
             ->sum('total_harga');
 
         $perStatus = (clone $query)
-            ->selectRaw('status, count(*) as jumlah')
+            ->selectRaw('status, COUNT(*) as jumlah')
             ->groupBy('status')
             ->pluck('jumlah', 'status');
 
@@ -43,6 +62,11 @@ class LaporanController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.laporan.index', compact('orders', 'jumlahPesanan', 'pendapatan', 'perStatus'));
+        return view('admin.laporan.index', compact(
+            'orders',
+            'jumlahPesanan',
+            'pendapatan',
+            'perStatus'
+        ));
     }
 }

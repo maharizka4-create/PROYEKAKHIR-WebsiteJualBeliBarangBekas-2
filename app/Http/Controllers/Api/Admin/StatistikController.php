@@ -14,13 +14,24 @@ class StatistikController extends Controller
     {
         return response()->json([
             'data' => [
-                'total_pembeli' => User::role(User::ROLE_USER)->count(),
-                'total_penjual' => User::role(User::ROLE_PENJUAL)->count(),
+                'total_pembeli' => User::role(['user', 'pembeli'])->count(),
+
+                'total_penjual' => User::role('penjual')->count(),
+
                 'total_barang' => Product::count(),
-                'menunggu_verifikasi' => Product::where('status_persetujuan', Product::MENUNGGU)->count(),
+
+                'menunggu_verifikasi' => Product::where(
+                    'status',
+                    Product::MENUNGGU
+                )->count(),
+
                 'total_transaksi' => Order::count(),
-                'pendapatan' => (int) Order::whereIn('status', [Order::DIBAYAR, Order::DIKIRIM, Order::SELESAI])
-                    ->sum('total_harga'),
+
+                'pendapatan' => (int) Order::whereIn('status', [
+                    Order::DIBAYAR,
+                    Order::DIKIRIM,
+                    Order::SELESAI,
+                ])->sum('total_harga'),
             ],
         ]);
     }

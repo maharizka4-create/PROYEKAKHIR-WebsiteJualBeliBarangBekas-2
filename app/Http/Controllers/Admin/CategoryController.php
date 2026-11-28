@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -11,14 +12,11 @@ class CategoryController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = Category::utama()
-            ->withCount('products')
-            ->with(['children' => fn ($q) => $q->withCount('products')])
-            ->when($request->q, function ($query, $kata) {
-                $query->where(function ($w) use ($kata) {
-                    $w->where('name', 'like', "%{$kata}%")
-                        ->orWhereHas('children', fn ($c) => $c->where('name', 'like', "%{$kata}%"));
-                });
+        $categories = Category::withCount('products')
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $kata = $request->q;
+
+                $query->where('name', 'like', "%{$kata}%");
             })
             ->orderBy('name')
             ->get();
@@ -30,65 +28,65 @@ class CategoryController extends Controller
     {
         $data = $request->validate([
             'name' => [
-                'required', 'string', 'max:100',
-                Rule::unique('categories', 'name')->where(fn ($q) => $q->where('parent_id', $request->parent_id)),
+                'required',
+                'string',
+                'max:100',
+                'unique:categories,name',
             ],
             'description' => ['nullable', 'string', 'max:255'],
-            'parent_id' => ['nullable', Rule::exists('categories', 'id')->whereNull('parent_id')],
         ], [
-            'name.unique' => 'Nama itu sudah dipakai di tempat yang sama.',
+            'name.unique' => 'Nama kategori sudah digunakan.',
         ]);
 
         Category::create($data);
 
-        return back()->with('status', $data['parent_id'] ?? null ? 'Jenis ditambahkan.' : 'Kategori ditambahkan.');
+        return back()->with('status', 'Kategori berhasil ditambahkan.');
     }
 
     public function edit(Category $category)
     {
-        $induk = Category::utama()
-            ->where('id', '!=', $category->id)
-            ->orderBy('name')
-            ->get();
-
-        return view('admin.categories.edit', compact('category', 'induk'));
+        return view('admin.categories.edit', compact('category'));
     }
 
     public function update(Request $request, Category $category)
     {
         $data = $request->validate([
             'name' => [
-                'required', 'string', 'max:100',
-                Rule::unique('categories', 'name')
-                    ->where(fn ($q) => $q->where('parent_id', $request->parent_id))
-                    ->ignore($category->id),
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('categories', 'name')->ignore($category->id),
             ],
             'description' => ['nullable', 'string', 'max:255'],
-            'parent_id' => [
-                'nullable',
-                Rule::exists('categories', 'id')->whereNull('parent_id'),
-                Rule::notIn([$category->id]),
-            ],
         ], [
-            'name.unique' => 'Nama itu sudah dipakai di tempat yang sama.',
+            'name.unique' => 'Nama kategori sudah digunakan.',
         ]);
 
-        // Kategori yang sudah punya jenis tidak boleh dijadikan jenis (maksimal 2 tingkat)
-        if (($data['parent_id'] ?? null) && $category->children()->exists()) {
-            return back()
-                ->withErrors(['parent_id' => 'Kategori yang punya jenis tidak bisa dijadikan jenis.'])
-                ->withInput();
-        }
+        $namaLama = $category->name;
 
         $category->update($data);
-
-        return redirect()->route('admin.categories.index')->with('status', 'Perubahan disimpan.');
+        
+        if ($namaLama !== $category->name) {
+            Product::where('category', $namaLama)
+                ->update(['category' => $category->name]);
+        }
+        return redirect()
+            ->route('admin.categories.index')
+            ->with('status', 'Perubahan kategori berhasil disimpan.');
     }
 
     public function destroy(Category $category)
     {
+        // Jangan hapus kategori yang masih dipakai produk.
+        if ($category->products()->exists()) {
+            return back()->with(
+                'error',
+                'Kategori tidak bisa dihapus karena masih digunakan oleh produk.'
+            );
+        }
+
         $category->delete();
 
-        return back()->with('status', 'Kategori dihapus.');
+        return back()->with('status', 'Kategori berhasil dihapus.');
     }
 }

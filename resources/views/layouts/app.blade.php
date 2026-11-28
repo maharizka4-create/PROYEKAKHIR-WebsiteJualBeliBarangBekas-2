@@ -14,8 +14,10 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
+
     <body class="font-sans antialiased text-coklat-950">
         <div class="min-h-screen flex flex-col bg-coklat-50">
+
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -29,7 +31,13 @@
 
             <!-- Page Content -->
             <main class="flex-1">
-                {{ $slot }}
+
+                {{-- Untuk Blade Component --}}
+                {{ $slot ?? '' }}
+
+                {{-- Untuk Blade Template (@extends) --}}
+                @yield('content')
+
             </main>
 
             <!-- Footer -->
@@ -38,6 +46,7 @@
                     &copy; {{ date('Y') }} SEKENOVA. Every item deserves a second story.
                 </div>
             </footer>
+
         </div>
     </body>
 </html>

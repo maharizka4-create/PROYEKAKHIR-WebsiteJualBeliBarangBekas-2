@@ -4,17 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request;    
 
 class VerifikasiController extends Controller
 {
-    // Daftar barang yang menunggu verifikasi
+    // Daftar produk yang menunggu verifikasi
     public function index(Request $request)
     {
-        $products = Product::with(['penjual', 'category'])
-            ->where('status_persetujuan', Product::MENUNGGU)
-            ->when($request->q, function ($query, $cari) {
-                $query->where('nama', 'like', '%' . $cari . '%');
+        $products = Product::with('penjual')
+            ->where('status', Product::MENUNGGU)
+            ->when($request->filled('q'), function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->q . '%');
             })
             ->latest()
             ->paginate(10)
@@ -23,23 +23,23 @@ class VerifikasiController extends Controller
         return view('admin.verifikasi.index', compact('products'));
     }
 
-    // Setujui barang
+    // Menyetujui produk
     public function setujui(Product $product)
     {
         $product->update([
-            'status_persetujuan' => Product::DISETUJUI,
-            'alasan_penolakan' => null,
-            'diperiksa_oleh' => auth()->id(),
-            'diperiksa_pada' => now(),
+            'status' => Product::DISETUJUI,
         ]);
 
-        return back()->with('success', 'Barang "' . $product->nama . '" disetujui.');
+        return back()->with(
+            'success',
+            'Produk "' . $product->name . '" berhasil disetujui.'
+        );
     }
 
-    // Tolak barang (alasan wajib diisi)
+    // Menolak produk
     public function tolak(Request $request, Product $product)
     {
-        $data = $request->validate([
+        $request->validate([
             'alasan_penolakan' => ['required', 'string', 'max:500'],
         ], [
             'alasan_penolakan.required' => 'Alasan penolakan wajib diisi.',
@@ -47,12 +47,12 @@ class VerifikasiController extends Controller
         ]);
 
         $product->update([
-            'status_persetujuan' => Product::DITOLAK,
-            'alasan_penolakan' => $data['alasan_penolakan'],
-            'diperiksa_oleh' => auth()->id(),
-            'diperiksa_pada' => now(),
+            'status' => Product::DITOLAK,
         ]);
 
-        return back()->with('success', 'Barang "' . $product->nama . '" ditolak.');
+        return back()->with(
+            'success',
+            'Produk "' . $product->name . '" berhasil ditolak. Catatan alasan belum disimpan ke database.'
+        );
     }
 }

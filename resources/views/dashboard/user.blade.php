@@ -58,12 +58,12 @@
                             <span class="ml-2">→</span>
                         </a>
 
-                        <a href="{{ route('profile.edit') }}"
+                        <a href="{{ route('user.orders.index') }}"
                             class="inline-flex items-center justify-center
                             px-6 py-3 rounded-xl border border-white/40
                             text-white font-semibold text-sm
                             hover:bg-white/10 transition">
-                            Profil Saya
+                            Pesanan Saya
                         </a>
                     </div>
                 </div>
@@ -75,12 +75,15 @@
                     w-56 h-56 rounded-full bg-amber-200/10"></div>
             </section>
 
+
             {{-- MENU UTAMA --}}
             <section class="mt-10">
+
                 <div class="mb-6">
                     <h3 class="text-xl font-bold text-coklat-950">
                         Menu Utama
                     </h3>
+
                     <p class="text-sm text-coklat-600 mt-1">
                         Akses layanan SEKENOVA dengan mudah.
                     </p>
@@ -116,6 +119,36 @@
                         </div>
                     </a>
 
+
+                    {{-- PESANAN SAYA --}}
+                    <a href="{{ route('user.orders.index') }}"
+                        class="group bg-white rounded-2xl p-6
+                        border border-coklat-200 shadow-sm
+                        hover:shadow-lg hover:-translate-y-1
+                        transition duration-300">
+
+                        <div class="w-14 h-14 rounded-xl
+                            bg-amber-100 flex items-center
+                            justify-center text-2xl">
+                            📦
+                        </div>
+
+                        <h4 class="mt-5 font-bold text-lg
+                            text-coklat-950 group-hover:text-amber-700">
+                            Pesanan Saya
+                        </h4>
+
+                        <p class="mt-2 text-sm text-coklat-600 leading-relaxed">
+                            Lihat riwayat pembelian, unggah bukti
+                            pembayaran, dan pantau status pengiriman.
+                        </p>
+
+                        <div class="mt-5 text-sm font-bold text-coklat-700">
+                            Lihat Pesanan →
+                        </div>
+                    </a>
+
+
                     {{-- PROFIL --}}
                     <a href="{{ route('profile.edit') }}"
                         class="group bg-white rounded-2xl p-6
@@ -144,14 +177,15 @@
                         </div>
                     </a>
 
-                    {{-- PANDUAN --}}
+
+                    {{-- PANDUAN BELANJA --}}
                     <div class="bg-white rounded-2xl p-6
                         border border-coklat-200 shadow-sm">
 
                         <div class="w-14 h-14 rounded-xl
                             bg-amber-100 flex items-center
                             justify-center text-2xl">
-                            📦
+                            💡
                         </div>
 
                         <h4 class="mt-5 font-bold text-lg text-coklat-950">
@@ -170,6 +204,7 @@
 
                 </div>
             </section>
+
 
             {{-- INFORMASI AKUN --}}
             <section class="mt-10 bg-white rounded-2xl
@@ -227,8 +262,10 @@
                 </div>
             </section>
 
+
             {{-- MOTIVASI --}}
             <section class="mt-10 text-center py-8">
+
                 <h3 class="text-xl font-bold text-coklat-950">
                     Belanja Lebih Bijak, Hidup Lebih Hemat.
                 </h3>
@@ -236,6 +273,7 @@
                 <p class="mt-3 text-sm text-coklat-600">
                     Every item deserves a second story.
                 </p>
+
             </section>
 
         </div>
